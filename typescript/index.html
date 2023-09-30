@@ -75,7 +75,19 @@
 <li>
 <p><a href="#union-and-intersections">union and intersections</a></p>
 </li>
+<li>
+<p><a href="#arrays">arrays</a></p>
+</li>
+<li>
+<p><a href="#tuples">tuples</a></p>
+</li>
+<li>
+<p><a href="#enums">enums</a></p>
+</li>
 </ul>
+</li>
+<li>
+<p><a href="#functions">functions</a></p>
 </li>
 </ul>
 </div>
@@ -249,10 +261,57 @@ a <span class="token operator">=</span> <span class="token punctuation">{</span>
   flyingHeight<span class="token operator">:</span> <span class="token number">100</span><span class="token punctuation">,</span>
   flyingSpeed<span class="token operator">:</span> <span class="token number">40</span><span class="token punctuation">,</span>
 <span class="token punctuation">}</span></code></pre></div>
-<p>This is worth reiterating: a value with a union type (|) isn’t necessarily one specific member of your union; in fact, it can be both members at once (as shown by <code class="language-text">both</code> in the example above).</p></section><hr/><footer><div class="bio"></div></footer></article></main><footer>© <!-- -->2023<!-- -->, Built with<!-- --> <a href="https://www.gatsbyjs.com">Gatsby</a></footer></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/typescript/";/*]]>*/</script><!-- slice-start id="_gatsby-scripts-1" -->
+<p>A value with a union type (|) isn’t necessarily one specific member of your union; in fact, it can be both members at once (as shown by <code class="language-text">both</code> in the example above).</p>
+<h3 id="arrays" style="position:relative;"><a href="#arrays" aria-label="arrays permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>arrays</h3>
+<p>TypeScript supports two syntaxes for arrays: <code class="language-text">T[]</code> and <code class="language-text">Array&lt;T></code>. They are identical both in meaning and in performance. Example:</p>
+<div class="gatsby-highlight" data-language="ts"><pre class="language-ts"><code class="language-ts"><span class="token keyword">let</span> arr<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token string">"one"</span><span class="token punctuation">,</span> <span class="token string">"two"</span><span class="token punctuation">,</span> <span class="token string">"three"</span><span class="token punctuation">]</span></code></pre></div>
+<h3 id="tuples" style="position:relative;"><a href="#tuples" aria-label="tuples permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>tuples</h3>
+<p>Tuples are subtypes of array. They’re a special way to type arrays that have fixed lengths, where the values at each index have specific, known types. Unlike most other types, tuples have to be explicitly typed when you declare them.</p>
+<div class="gatsby-highlight" data-language="ts"><pre class="language-ts"><code class="language-ts"><span class="token comment">// A tuple of [first name, last name, birth year]</span>
+<span class="token keyword">let</span> b<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token builtin">string</span><span class="token punctuation">,</span> <span class="token builtin">string</span><span class="token punctuation">,</span> <span class="token builtin">number</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token string">"malcolm"</span><span class="token punctuation">,</span> <span class="token string">"gladwell"</span><span class="token punctuation">,</span> <span class="token number">1963</span><span class="token punctuation">]</span></code></pre></div>
+<h3 id="enums" style="position:relative;"><a href="#enums" aria-label="enums permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>enums</h3>
+<p>Enums are a way to enumerate the possible values for a type. They are unordered data structures that map keys to values. Example:</p>
+<div class="gatsby-highlight" data-language="ts"><pre class="language-ts"><code class="language-ts"><span class="token keyword">enum</span> Language <span class="token punctuation">{</span>
+  English <span class="token operator">=</span> <span class="token string">"ENG"</span><span class="token punctuation">,</span>
+  Spanish <span class="token operator">=</span> <span class="token string">"ESP"</span><span class="token punctuation">,</span>
+  Russian <span class="token operator">=</span> <span class="token string">"RUS"</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span></code></pre></div>
+<p>To retrieve a value from an enum, you access it with either dot or bracket notation just like you would to get a value from a regular object:</p>
+<div class="gatsby-highlight" data-language="ts"><pre class="language-ts"><code class="language-ts"><span class="token keyword">let</span> eng <span class="token operator">=</span> Language<span class="token punctuation">.</span>English
+<span class="token keyword">let</span> rus <span class="token operator">=</span> Languahe<span class="token punctuation">[</span><span class="token string">"Russian"</span><span class="token punctuation">]</span></code></pre></div>
+<h2 id="functions" style="position:relative;"><a href="#functions" aria-label="functions permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>functions</h2>
+<p>In JavaScript, functions are first-class objects. That means you can use them exactly like you would any other object: assign them to variables, pass them to other functions, return them from functions, assign them to objects and prototypes, write properties to them, read those properties back, and so on. TypeScript models all of those things with its rich type system.</p>
+<p>Here’re different ways to declare a function in TypeScript:</p>
+<ul>
+<li>Named Function</li>
+</ul>
+<div class="gatsby-highlight" data-language="ts"><pre class="language-ts"><code class="language-ts"><span class="token keyword">function</span> <span class="token function">add</span><span class="token punctuation">(</span>a<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">,</span> b<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token builtin">number</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> a <span class="token operator">+</span> b
+<span class="token punctuation">}</span></code></pre></div>
+<ul>
+<li>Function Expression</li>
+</ul>
+<div class="gatsby-highlight" data-language="ts"><pre class="language-ts"><code class="language-ts"><span class="token keyword">let</span> <span class="token function-variable function">greet</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span>name<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token builtin">string</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token string">"hello "</span> <span class="token operator">+</span> name
+<span class="token punctuation">}</span></code></pre></div>
+<ul>
+<li>Arrow Function expression</li>
+</ul>
+<div class="gatsby-highlight" data-language="ts"><pre class="language-ts"><code class="language-ts"><span class="token keyword">let</span> greet2 <span class="token operator">=</span> <span class="token punctuation">(</span>name<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token builtin">string</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token string">"hello "</span> <span class="token operator">+</span> name
+<span class="token punctuation">}</span></code></pre></div>
+<p>Like in object and tuple types, you can use ? to mark parameters as optional. When declaring your function’s parameters, required parameters have to come first, followed by optional parameters:</p>
+<div class="gatsby-highlight" data-language="ts"><pre class="language-ts"><code class="language-ts"><span class="token keyword">function</span> <span class="token function">log</span><span class="token punctuation">(</span>message<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">,</span> userId<span class="token operator">?</span><span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">let</span> time <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Date</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">toLocaleTimeString</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+  <span class="token builtin">console</span><span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>time<span class="token punctuation">,</span> message<span class="token punctuation">,</span> userId <span class="token operator">||</span> <span class="token string">"Not signed in"</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span></code></pre></div>
+<p>Sometimes, you might opt for a variadic function API—one that takes a variable number of arguments—instead of a fixed-arity API that takes a fixed number of arguments. We can use <code class="language-text">rest</code> parameters to safely make our sum function accept any number of arguments:</p>
+<div class="gatsby-highlight" data-language="ts"><pre class="language-ts"><code class="language-ts"><span class="token keyword">function</span> <span class="token function">sumVariadic</span><span class="token punctuation">(</span><span class="token operator">...</span>numbers<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token operator">:</span> <span class="token builtin">number</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> numbers<span class="token punctuation">.</span><span class="token function">reduce</span><span class="token punctuation">(</span><span class="token punctuation">(</span>total<span class="token punctuation">,</span> n<span class="token punctuation">)</span> <span class="token operator">=></span> total <span class="token operator">+</span> n<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span></code></pre></div></section><hr/><footer><div class="bio"></div></footer></article></main><footer>© <!-- -->2023<!-- -->, Built with<!-- --> <a href="https://www.gatsbyjs.com">Gatsby</a></footer></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/typescript/";/*]]>*/</script><!-- slice-start id="_gatsby-scripts-1" -->
           <script
             id="gatsby-chunk-mapping"
           >
             window.___chunkMapping="{\"app\":[\"/app-a71131d45b7679166718.js\"],\"component---src-pages-404-js\":[\"/component---src-pages-404-js-c76f759449b7ac2e3392.js\"],\"component---src-pages-index-js\":[\"/component---src-pages-index-js-0a7d19e061e01c1a62ba.js\"],\"component---src-pages-using-typescript-tsx\":[\"/component---src-pages-using-typescript-tsx-08405464d01c923fda06.js\"],\"component---src-templates-blog-post-js\":[\"/component---src-templates-blog-post-js-e4b6e7f52aa9a06bcfef.js\"]}";
           </script>
-        <script>window.___webpackCompilationHash="7b3f5ea88bcb69cf8dcc";</script><script src="/webpack-runtime-2bd3040a87d03ce5a0ab.js" async></script><script src="/framework-195f9a31e5a4e6cebf51.js" async></script><script src="/app-a71131d45b7679166718.js" async></script><!-- slice-end id="_gatsby-scripts-1" --></body></html>
+        <script>window.___webpackCompilationHash="902278663550da7c7c39";</script><script src="/webpack-runtime-2bd3040a87d03ce5a0ab.js" async></script><script src="/framework-195f9a31e5a4e6cebf51.js" async></script><script src="/app-a71131d45b7679166718.js" async></script><!-- slice-end id="_gatsby-scripts-1" --></body></html>
