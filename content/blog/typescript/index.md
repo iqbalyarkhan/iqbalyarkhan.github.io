@@ -217,4 +217,87 @@ let both: Animals = {
 }
 ```
 
-This is worth reiterating: a value with a union type (|) isn’t necessarily one specific member of your union; in fact, it can be both members at once (as shown by `both` in the example above).
+A value with a union type (|) isn’t necessarily one specific member of your union; in fact, it can be both members at once (as shown by `both` in the example above).
+
+### arrays
+
+TypeScript supports two syntaxes for arrays: `T[]` and `Array<T>`. They are identical both in meaning and in performance. Example:
+
+```ts
+let arr: string[] = ["one", "two", "three"]
+```
+
+### tuples
+
+Tuples are subtypes of array. They’re a special way to type arrays that have fixed lengths, where the values at each index have specific, known types. Unlike most other types, tuples have to be explicitly typed when you declare them.
+
+```ts
+// A tuple of [first name, last name, birth year]
+let b: [string, string, number] = ["malcolm", "gladwell", 1963]
+```
+
+### enums
+
+Enums are a way to enumerate the possible values for a type. They are unordered data structures that map keys to values. Example:
+
+```ts
+enum Language {
+  English = "ENG",
+  Spanish = "ESP",
+  Russian = "RUS",
+}
+```
+
+To retrieve a value from an enum, you access it with either dot or bracket notation just like you would to get a value from a regular object:
+
+```ts
+let eng = Language.English
+let rus = Languahe["Russian"]
+```
+
+## functions
+
+In JavaScript, functions are first-class objects. That means you can use them exactly like you would any other object: assign them to variables, pass them to other functions, return them from functions, assign them to objects and prototypes, write properties to them, read those properties back, and so on. TypeScript models all of those things with its rich type system.
+
+Here’re different ways to declare a function in TypeScript:
+
+- Named Function
+
+```ts
+function add(a: number, b: number): number {
+  return a + b
+}
+```
+
+- Function Expression
+
+```ts
+let greet = function (name: string): string {
+  return "hello " + name
+}
+```
+
+- Arrow Function expression
+
+```ts
+let greet2 = (name: string): string => {
+  return "hello " + name
+}
+```
+
+Like in object and tuple types, you can use ? to mark parameters as optional. When declaring your function’s parameters, required parameters have to come first, followed by optional parameters:
+
+```ts
+function log(message: string, userId?: string) {
+  let time = new Date().toLocaleTimeString()
+  console.log(time, message, userId || "Not signed in")
+}
+```
+
+Sometimes, you might opt for a variadic function API—one that takes a variable number of arguments—instead of a fixed-arity API that takes a fixed number of arguments. We can use `rest` parameters to safely make our sum function accept any number of arguments:
+
+```ts
+function sumVariadic(...numbers: number[]): number {
+  return numbers.reduce((total, n) => total + n, 0)
+}
+```
