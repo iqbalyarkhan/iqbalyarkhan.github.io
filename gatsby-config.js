@@ -7,7 +7,11 @@
 /**
  * @type {import('gatsby').GatsbyConfig}
  */
+
+const config = require("./data/SiteConfig.js");
+
 module.exports = {
+  pathPrefix: config.pathPrefix === "" ? "/" : config.pathPrefix,
   siteMetadata: {
     title: `Gatsby Starter Blog`,
     author: {
