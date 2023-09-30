@@ -13,10 +13,10 @@ const config = require("./data/SiteConfig.js");
 module.exports = {
   pathPrefix: config.pathPrefix === "" ? "/" : config.pathPrefix,
   siteMetadata: {
-    title: `Full(dot)Stack`,
+    title: 'Full(dot)Stack',
     author: {
-      name: `Full(dot)Stack`,
-      summary: ``,
+      name: 'Full(dot)Stack',
+      summary: '...',
     },
     description: `A starter blog demonstrating what Gatsby can do.`,
     siteUrl: `https://gatsbystarterblogsource.gatsbyjs.io/`,
