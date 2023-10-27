@@ -65,7 +65,7 @@ TypeScript statically analyzes your code for errors, and shows them to you befor
 
 A **type** is **_a set of values and the things you can do with them._** Here's typescript's type hierarchy:
 
-![type-hierarchy](./type-hierarchy.png)
+![type-hierarchy](type-hierarchy.png)
 
 Example of type annotated function:
 
