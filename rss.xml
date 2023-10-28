@@ -1,4 +1,276 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Gatsby Starter Blog RSS Feed]]></title><description><![CDATA[A starter blog demonstrating what Gatsby can do.]]></description><link>https://gatsbystarterblogsource.gatsbyjs.io</link><generator>GatsbyJS</generator><lastBuildDate>Fri, 27 Oct 2023 23:30:14 GMT</lastBuildDate><item><title><![CDATA[Typescript]]></title><description><![CDATA[Compiler Type System Types any objects optional values index signatures union and intersections arrays tuples enums functions Compiler Here…]]></description><link>https://gatsbystarterblogsource.gatsbyjs.io/typescript/</link><guid isPermaLink="false">https://gatsbystarterblogsource.gatsbyjs.io/typescript/</guid><pubDate>Fri, 29 Sep 2023 22:40:32 GMT</pubDate><content:encoded>&lt;div class=&quot;table-of-contents&quot;&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Gatsby Starter Blog RSS Feed]]></title><description><![CDATA[A starter blog demonstrating what Gatsby can do.]]></description><link>https://gatsbystarterblogsource.gatsbyjs.io</link><generator>GatsbyJS</generator><lastBuildDate>Sat, 28 Oct 2023 04:19:03 GMT</lastBuildDate><item><title><![CDATA[AWS Lambda & SQS]]></title><description><![CDATA[Intro Architecture SQS Standard Queues FIFO queues Identifiers for SQS Using lambda with SQS Event source mappings DLQs Code! Appendix Intro…]]></description><link>https://gatsbystarterblogsource.gatsbyjs.io/AWS Lambda &amp; SQS/</link><guid isPermaLink="false">https://gatsbystarterblogsource.gatsbyjs.io/AWS Lambda &amp; SQS/</guid><pubDate>Fri, 27 Oct 2023 22:40:32 GMT</pubDate><content:encoded>&lt;div class=&quot;table-of-contents&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;#intro&quot;&gt;Intro&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;#architecture&quot;&gt;Architecture&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;#sqs&quot;&gt;SQS&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;#standard-queues&quot;&gt;Standard Queues&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#fifo-queues&quot;&gt;FIFO queues&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#identifiers-for-sqs&quot;&gt;Identifiers for SQS&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;#using-lambda-with-sqs&quot;&gt;Using lambda with SQS&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;#event-source-mappings&quot;&gt;Event source mappings&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;#dlqs&quot;&gt;DLQs&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;#code&quot;&gt;Code!&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;#appendix&quot;&gt;Appendix&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;h2 id=&quot;intro&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#intro&quot; aria-label=&quot;intro permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Intro&lt;/h2&gt;
+&lt;p&gt;One of the most common patterns in serverless applications is triggering a lambda when an SQS queue receives a message. This is called using SQS as an event source for lambda. Let&apos;s look at the simple architecture we&apos;re building:&lt;/p&gt;
+&lt;h2 id=&quot;architecture&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#architecture&quot; aria-label=&quot;architecture permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Architecture&lt;/h2&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 286px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/e754d2c60226fb4b4797a6a62c49d5b8/357e3/QueueWithDLQ.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 91.13924050632912%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAASCAYAAABb0P4QAAAACXBIWXMAAAsTAAALEwEAmpwYAAACaElEQVR42qWTW0gUYRTH5zGCHgqqp4IgejCphyKiCKMwinooSHqLiKACX8qQrCQtUzNlvaR0ge2mkbBRUgqZ3ciy0tVcNUq8VNq6uzOzuTvrzu7szv7and0EIUPXw5z55nwMv3O+/3eO4FyRj2N5Hs6UIsPt80/hq3iDYWGdf1okYiz6aA/BxgLUO4fR3t6M7usIjmV5uDaUIW6tQtpezdiSsyglL6YHJmBoKn5TOmrtUYIt5SgnFxP63IAgbqnEfagO98Fafh+rR06vwVXQhKz5kF0SsixPdUlEHPfR3VyP/3wKgaf5hL+3M3FhDaolG8GZWoy08xqutErEPdeJxUrpy3gxoXC0oMhU1+NVTziG8VzdhxYFag25qI9zUZ6ZEOwLshlbmMN4yhWkVYWMCMdRip7PSENvVyMe0y6U4s2MW86gKW4E9ZEN5X4H73PMDFU0EXjQhdbnmKrXNBbUQvTbOuhtbWZ0ZMTYE2Kvn047dU8stHZ94v+Iv3nif0miyLu2D7S2fcRqtRpyGMDB/gE626302XrR/CozoiZMj0K8Xu9kLJCsxZLqEUKahiRJxncknKgwdoRYJl3XZ81VAwEGfwxPSjH7CvW4HoGWb3gyHyKesDBwxIw3qwFPbmMSwEQreS9Fb1bIxLW6GDm1xJgw+6LTyQOVsleIG03I+82IO2pwZ9xC3FQ+B6DptTH/sZGVD9w2VnFb9RyOXNjMr3lZONeX4lh7GcfKi4wtPZf8pfjvteNaV4qy14wv4y5SWhXy7hvJ92Gs54g+/V++0tfZTXBCNeLkgYnxGxoeorvHRiDaj7FJ+QNaMSXxwlCsawAAAABJRU5ErkJggg==&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;SQS-Lambda&quot;
+        title=&quot;&quot;
+        src=&quot;/static/e754d2c60226fb4b4797a6a62c49d5b8/357e3/QueueWithDLQ.png&quot;
+        srcset=&quot;/static/e754d2c60226fb4b4797a6a62c49d5b8/c26ae/QueueWithDLQ.png 158w,
+/static/e754d2c60226fb4b4797a6a62c49d5b8/357e3/QueueWithDLQ.png 286w&quot;
+        sizes=&quot;(max-width: 286px) 100vw, 286px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;The flow is quite simple: We send a message to the SQS queue from console (for now) and have the lambda print the received message. Any errors go into the DLQ. Here&apos;s a sample output from lambda logs:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;2023-10-27T23:48:53.251Z	74f78d0e-7faa-506e-ae9a-d0b83136e687	INFO	record: {
+    &quot;messageId&quot;: &quot;67fc17f2&quot;,
+    &quot;receiptHandle&quot;: &quot;AQEBx&quot;,
+    &quot;body&quot;: &quot;This is a test message from the console my friend!&quot;,
+    &quot;attributes&quot;: {
+        &quot;ApproximateReceiveCount&quot;: &quot;1&quot;,
+        &quot;SentTimestamp&quot;: &quot;1698450532855&quot;,
+        &quot;SenderId&quot;: &quot;AIDA&quot;,
+        &quot;ApproximateFirstReceiveTimestamp&quot;: &quot;1698450532865&quot;
+    },
+    &quot;messageAttributes&quot;: {},
+    &quot;md5OfBody&quot;: &quot;405ss&quot;,
+    &quot;eventSource&quot;: &quot;aws:sqs&quot;,
+    &quot;eventSourceARN&quot;: &quot;arn:aws:sqs:us-east-1:X:SQSToLambdaStack-notificationsQueue8852CCBB-6OA4tVr4CWFS&quot;,
+    &quot;awsRegion&quot;: &quot;us-east-1&quot;
+}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h2 id=&quot;sqs&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#sqs&quot; aria-label=&quot;sqs permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;SQS&lt;/h2&gt;
+&lt;p&gt;More details on architecture can be found &lt;a href=&quot;https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-basic-architecture.html&quot;&gt;here&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;In the scenario above, our system has a producer (components that send messages to the queue, ie me!) and consumers (components that receive messages from the queue ie lambda). The queue redundantly stores the messages across multiple Amazon SQS servers:&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 630px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/6271aadd6bbc62832e9aabb9580ed521/df438/queue-distributed.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 45.56962025316456%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAJCAYAAAAywQxIAAAACXBIWXMAABYlAAAWJQFJUiTwAAABjElEQVR42oVS207CQBDt/7/4BWriqyG+qCExQSCi4RIFIkWgUAq0WKBcir3utsedLVEjJm6y6e6cmbPnzFThnMM0Lei6Dtd18d+K4xjT6RS2bSNN0yNcoeBoNERXVREEwVFCkiRg4tGYMVD5drdDrV5Hu91GEIbgB5wxLs8KJXa1EfKlMjTDkCQ/XyacSCkWhx44j+WdNi1y6PseosiTuUokLJRqNVxc5dDp9/8kpDtFfKeLpT3GRqjknMHzsha1ek3cPVWkSoWJgt5whELlEYZpHhPGHEtngZmdYer4Hb2OhufSDWaLzBEpNKyVaEEkLAuFxWoV57lLqNrgm/BAGuxcvBXyuH6oiv6tqRyhu4cz1sHJcuTD1MswV3NpXyocGhNUGg3M5vMjhdSSWChg4rzRX2G93KNn7RGsBvBXfWH7A87ahu3YgjDJenhbLOHk7BRNtfOHZfY1gHC7gzMxoS9dLDstLNS2VJkKnCYsh0IyiZSJJlPg98p+CSa/VJTQgNJEDkBuwkUt5ZDlTxfCsEDrLrxUAAAAAElFTkSuQmCC&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;SQS-Distributed&quot;
+        title=&quot;&quot;
+        src=&quot;/static/6271aadd6bbc62832e9aabb9580ed521/f058b/queue-distributed.png&quot;
+        srcset=&quot;/static/6271aadd6bbc62832e9aabb9580ed521/c26ae/queue-distributed.png 158w,
+/static/6271aadd6bbc62832e9aabb9580ed521/6bdcf/queue-distributed.png 315w,
+/static/6271aadd6bbc62832e9aabb9580ed521/f058b/queue-distributed.png 630w,
+/static/6271aadd6bbc62832e9aabb9580ed521/40601/queue-distributed.png 945w,
+/static/6271aadd6bbc62832e9aabb9580ed521/78612/queue-distributed.png 1260w,
+/static/6271aadd6bbc62832e9aabb9580ed521/df438/queue-distributed.png 1556w&quot;
+        sizes=&quot;(max-width: 630px) 100vw, 630px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;The following scenario describes the lifecycle of an Amazon SQS message in a queue, from creation to deletion.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 630px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/43d53e4ce7f2c976a338dad54a7b4583/21482/lifecycle.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 93.0379746835443%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAATCAYAAACQjC21AAAACXBIWXMAABYlAAAWJQFJUiTwAAADQUlEQVR42mWU22/TSBTG80fv476ildCKJ4QQiFY8tXSXoEoUtdy7gs0WbUu5hDhx4yTk0tiO49iN7x5/nDNjm7aMdDTjyeTzd87vjBuwLIgsQ0qRlSGEgBxFgYLWYRRe3QftFyp+DrVuoNmEd36Ob1oHk/EY30cjLBYORHnY9Xw8e3eIr+02PM8r31MgjmMZQuTIZRRSssEHVv4a+miKU62Ll60WzNkIYu0g922Y4x7G5hx5Tu7JYGC3kTinSOghSWL54iiK4A/3kCcrJTiYTLH9bB93t7Zwc3MD/Y9v4B9tYv78D3if9sqMBLkAwmUf8aor3cRRgND6SPMFEk+HyGMlqBkGNpqP8aD5F+5sPcTcodQiA6nzX51inucIQ66lQBSS0OwfhGuX5jeIaE4y0AuFEkzSFM5yiaXrwqVgANeLzXucGgsn7Mw8IkeJ/DVNk7KeJJjT23/SQ+2oKPdZICexy88Mghio3/Ks3Ocz7HB3FwG5GxBdpjymGA2H0PUezLmC8frDMTpdDS6dK7uJgETKFQuRIMNRlE0T/mqFbk+H1u2i3enAdpa4iFISK+C4Kxwef4BlWySQIfSmiF2NypRJyuw8ilOsp4cQsaNquHA9nHb79MdjbO8fYGa0UZgaYmuIdDmua8mFCZc6EqulKJPDaGUQ5TUC6xiiapuuMcC9Rzu4tfEAN+7fg/7/c/itDTj/3sHaOLoCJSVncZIitL8gDDysR0+RXJwjFaqmZR9O8OTlC+y+foG/D/akY2phxOarGlJGh2vKlGo4OaBG9mrKXFOG1RDVnbx+L+Wz6r/qztbUOZi6JK+oZ2UnNPD+PSLHgbVY0B1ewLZt2OXask15Q/bffYZujGRDV46Vq4TERd1mSvDkBJ5loqNpMM7OoPd6RLyHDtEeDIZ0O9b4/fYWDlsndDMuSCiVDjl9FmTXPFdrWcMgjDCzHAymU3wmYc/35Y8cnEpMNeORX6ojB1OuYF0R/D6bY/fVW2w2n+BPIj2hz1mVWjUqJyyiUs0RBIF8ZtccteC3/hnu7uzg/qOHeLr9G+bm9BdBdqI+Dmqu0qw+GtW6/B760Pp9nA0NjIdfZQrXhwKR1qQrqpfpM5QfJ72itqBmHv0AAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;SQS-Lifecycle&quot;
+        title=&quot;&quot;
+        src=&quot;/static/43d53e4ce7f2c976a338dad54a7b4583/f058b/lifecycle.png&quot;
+        srcset=&quot;/static/43d53e4ce7f2c976a338dad54a7b4583/c26ae/lifecycle.png 158w,
+/static/43d53e4ce7f2c976a338dad54a7b4583/6bdcf/lifecycle.png 315w,
+/static/43d53e4ce7f2c976a338dad54a7b4583/f058b/lifecycle.png 630w,
+/static/43d53e4ce7f2c976a338dad54a7b4583/40601/lifecycle.png 945w,
+/static/43d53e4ce7f2c976a338dad54a7b4583/78612/lifecycle.png 1260w,
+/static/43d53e4ce7f2c976a338dad54a7b4583/21482/lifecycle.png 1350w&quot;
+        sizes=&quot;(max-width: 630px) 100vw, 630px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+        decoding=&quot;async&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;A producer (component 1) sends message A to a queue, and the message is distributed across the Amazon SQS servers redundantly.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;When a consumer (component 2) is ready to process messages, it consumes messages from the queue, and message A is returned. While message A is being processed, it remains in the queue and isn&apos;t returned to subsequent receive requests for the duration of the visibility timeout.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The consumer (component 2) deletes message A from the queue to prevent the message from being received and processed again when the visibility timeout expires.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Amazon SQS automatically deletes messages that have been in a queue for more than the maximum message retention period. The default message retention period is 4 days. However, you can set the message retention period to a value from 60 seconds to 1,209,600 seconds (14 days).&lt;/p&gt;
+&lt;p&gt;Amazon SQS supports two types of queues – standard queues and FIFO queues:&lt;/p&gt;
+&lt;h3 id=&quot;standard-queues&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#standard-queues&quot; aria-label=&quot;standard queues permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Standard Queues&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Unlimited Throughput: Standard queues support a nearly unlimited number of API calls per second, per API action&lt;/li&gt;
+&lt;li&gt;At-Least-Once Delivery: A message is delivered at least once, but occasionally more than one copy of a message is delivered. Amazon SQS stores copies of your messages on multiple servers for redundancy and high availability. On rare occasions, one of the servers that stores a copy of a message might be unavailable when you receive or delete a message. If this occurs, the copy of the message isn&apos;t deleted on that unavailable server, and you might get that message copy again when you receive messages. Design your applications to be idempotent (they should not be affected adversely when processing the same message more than once).&lt;/li&gt;
+&lt;li&gt;Best-Effort Ordering: Occasionally, messages are delivered in an order different from which they were sent. It makes a best effort to preserve the order of messages, but more than one copy of a message might be delivered out of order.&lt;/li&gt;
+&lt;li&gt;Use standard queues to send data between applications when the throughput is important, for example:
+&lt;ul&gt;
+&lt;li&gt;Decouple live user requests from intensive background work: let users upload media while resizing or encoding it.&lt;/li&gt;
+&lt;li&gt;Allocate tasks to multiple worker nodes: process a high number of credit card validation requests.&lt;/li&gt;
+&lt;li&gt;Batch messages for future processing: schedule multiple entries to be added to a database.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;fifo-queues&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#fifo-queues&quot; aria-label=&quot;fifo queues permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;FIFO queues&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;High Throughput: If you use batching, FIFO queues support up to 3,000 messages per second, per API method (SendMessageBatch, ReceiveMessage, or DeleteMessageBatch). The 3,000 messages per second represent 300 API calls, each with a batch of 10 messages.&lt;/li&gt;
+&lt;li&gt;Exactly-Once Processing: A message is delivered once and remains available until a consumer processes and deletes it. Duplicates aren&apos;t introduced into the queue.&lt;/li&gt;
+&lt;li&gt;First-In-First-Out Delivery: The order in which messages are sent and received is strictly preserved.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;identifiers-for-sqs&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#identifiers-for-sqs&quot; aria-label=&quot;identifiers for sqs permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Identifiers for SQS&lt;/h3&gt;
+&lt;p&gt;In the payload we saw earlier, there were a few different items. Let&apos;s look at each:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Message Id: Each message receives a system-assigned message ID that Amazon SQS returns to you in the SendMessage response. This identifier is useful for identifying messages. The maximum length of a message ID is 100 characters.&lt;/li&gt;
+&lt;li&gt;Receipt handle: Every time you receive a message from a queue, you receive a receipt handle for that message. This handle is associated with the action of receiving the message, not with the message itself. To delete the message or to change the message visibility, you must provide the receipt handle (not the message ID). Thus, you must always receive a message before you can delete it (you can&apos;t put a message into the queue and then recall it). The maximum length of a receipt handle is 1,024 characters.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;using-lambda-with-sqs&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#using-lambda-with-sqs&quot; aria-label=&quot;using lambda with sqs permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Using lambda with SQS&lt;/h2&gt;
+&lt;p&gt;You can use an AWS Lambda function to process messages in an Amazon SQS queue. Lambda polls the queue and invokes your Lambda function synchronously with an event that contains queue messages. To allow your function time to process each batch of records, set the source queue&apos;s visibility timeout to at least six times the &lt;a href=&quot;https://docs.aws.amazon.com/lambda/latest/dg/configuration-function-common.html#configuration-common-summary&quot;&gt;timeout that you configure&lt;/a&gt; on your function. The extra time allows for Lambda to retry if your function is throttled while processing a previous batch.&lt;/p&gt;
+&lt;p&gt;You can specify another queue to act as a dead-letter queue for messages that your Lambda function can&apos;t process.&lt;/p&gt;
+&lt;p&gt;The Lambda execution role must include the following permissions:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;ts&quot;&gt;&lt;pre class=&quot;language-ts&quot;&gt;&lt;code class=&quot;language-ts&quot;&gt;sqs&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; DeleteMessage
+
+sqs&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; GetQueueAttributes
+
+sqs&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; ReceiveMessage&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;If you associate an encrypted queue with a Lambda function, add the &lt;code class=&quot;language-text&quot;&gt;kms:Decrypt&lt;/code&gt; permission to the Lambda execution role.&lt;/p&gt;
+&lt;h3 id=&quot;event-source-mappings&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#event-source-mappings&quot; aria-label=&quot;event source mappings permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Event source mappings&lt;/h3&gt;
+&lt;p&gt;Event source mappings allow us to determine what invokes the lambda. Lambda polls the queue and invokes your Lambda function synchronously with an event that contains queue messages. Lambda reads messages in batches and invokes your function once for each batch. When your function successfully processes a batch, Lambda deletes its messages from the queue.&lt;/p&gt;
+&lt;p&gt;When Lambda reads a batch, the messages stay in the queue but are hidden for the length of the queue&apos;s visibility timeout. If your function successfully processes the batch, Lambda deletes the messages from the queue. &lt;strong&gt;By default, if your function encounters an error while processing a batch, all messages in that batch become visible in the queue again&lt;/strong&gt;. For this reason, your function code must be able to process the same message multiple times without unintended side effects.&lt;/p&gt;
+&lt;p&gt;To prevent Lambda from processing a message multiple times, you can either configure your event source mapping to include &lt;a href=&quot;https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#services-sqs-batchfailurereporting&quot;&gt;batch item failures&lt;/a&gt; in your function response, or you can use the Amazon SQS API action &lt;a href=&quot;https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_DeleteMessage.html&quot;&gt;DeleteMessage&lt;/a&gt; to remove messages from the queue as your Lambda function successfully processes them.&lt;/p&gt;
+&lt;p&gt;Example SQS message event looks like this:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;json&quot;&gt;&lt;pre class=&quot;language-json&quot;&gt;&lt;code class=&quot;language-json&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;token property&quot;&gt;&quot;Records&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;[&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;token property&quot;&gt;&quot;messageId&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;059f36b4-87a3-44ab-83d2-661975830a7d&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token property&quot;&gt;&quot;receiptHandle&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;AQEBwJnKyrHigUMZj6rYigCgxlaS3SLy0a...&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token property&quot;&gt;&quot;body&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;Test message.&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token property&quot;&gt;&quot;attributes&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;token property&quot;&gt;&quot;ApproximateReceiveCount&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;1&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;token property&quot;&gt;&quot;SentTimestamp&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;1545082649183&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;token property&quot;&gt;&quot;SenderId&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;AIDAIENQZJOLO23YVJ4VO&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;token property&quot;&gt;&quot;ApproximateFirstReceiveTimestamp&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;1545082649185&quot;&lt;/span&gt;
+      &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token property&quot;&gt;&quot;messageAttributes&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token property&quot;&gt;&quot;md5OfBody&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;e4e68fb7bd0e697a0ae8f1bb342846b3&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token property&quot;&gt;&quot;eventSource&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;aws:sqs&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token property&quot;&gt;&quot;eventSourceARN&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;arn:aws:sqs:us-east-2:123456789012:my-queue&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token property&quot;&gt;&quot;awsRegion&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;us-east-2&quot;&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;token property&quot;&gt;&quot;messageId&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;2e1424d4-f796-459a-8184-9c92662be6da&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token property&quot;&gt;&quot;receiptHandle&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;AQEBzWwaftRI0KuVm4tP+/7q1rGgNqicHq...&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token property&quot;&gt;&quot;body&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;Test message.&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token property&quot;&gt;&quot;attributes&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;token property&quot;&gt;&quot;ApproximateReceiveCount&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;1&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;token property&quot;&gt;&quot;SentTimestamp&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;1545082650636&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;token property&quot;&gt;&quot;SenderId&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;AIDAIENQZJOLO23YVJ4VO&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;token property&quot;&gt;&quot;ApproximateFirstReceiveTimestamp&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;1545082650649&quot;&lt;/span&gt;
+      &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token property&quot;&gt;&quot;messageAttributes&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token property&quot;&gt;&quot;md5OfBody&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;e4e68fb7bd0e697a0ae8f1bb342846b3&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token property&quot;&gt;&quot;eventSource&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;aws:sqs&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token property&quot;&gt;&quot;eventSourceARN&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;arn:aws:sqs:us-east-2:123456789012:my-queue&quot;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;token property&quot;&gt;&quot;awsRegion&quot;&lt;/span&gt;&lt;span class=&quot;token operator&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;us-east-2&quot;&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;token punctuation&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;By default:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Lambda polls up to 10 messages in your queue at once and sends that batch to your function.&lt;/li&gt;
+&lt;li&gt;To avoid invoking the function with a small number of records, you can tell the event source to buffer records for up to 5 minutes by configuring a &lt;strong&gt;batch window&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Before invoking the function, Lambda continues to poll messages from the SQS standard queue until:
+&lt;ul&gt;
+&lt;li&gt;The batch window expires&lt;/li&gt;
+&lt;li&gt;The invocation payload size quota is reached, or&lt;/li&gt;
+&lt;li&gt;The configured maximum batch size is reached.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;If you&apos;re using a batch window and your SQS queue contains very low traffic, Lambda might wait for up to 20 seconds before invoking your function. This is true even if you set a batch window lower than 20 seconds.&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&quot;dlqs&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#dlqs&quot; aria-label=&quot;dlqs permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;DLQs&lt;/h2&gt;
+&lt;p&gt;Amazon SQS supports dead-letter queues (DLQ), which other queues (source queues) can target for messages that can&apos;t be processed (consumed) successfully. Dead-letter queues are useful for debugging your application or messaging system because they let you isolate unconsumed messages to determine why their processing didn&apos;t succeed.&lt;/p&gt;
+&lt;p&gt;The main task of a dead-letter queue is to handle the lifecycle of unconsumed messages. A dead-letter queue lets you set aside and isolate messages that can&apos;t be processed correctly to determine why their processing didn&apos;t succeed. Setting up a dead-letter queue allows you to do the following:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Configure an alarm for any messages moved to a dead-letter queue.&lt;/li&gt;
+&lt;li&gt;Examine logs for exceptions that might have caused messages to be moved to a dead-letter queue.&lt;/li&gt;
+&lt;li&gt;Analyze the contents of messages moved to a dead-letter queue to diagnose software or the producer&apos;s or consumer&apos;s hardware issues.&lt;/li&gt;
+&lt;li&gt;Determine whether you have given your consumer sufficient time to process messages.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The redrive policy specifies the source queue, the dead-letter queue, and the conditions under which Amazon SQS moves messages from the former to the latter if the consumer of the source queue fails to process a message a specified number of times. The &lt;code class=&quot;language-text&quot;&gt;maxReceiveCount&lt;/code&gt; is the number of times a consumer tries receiving a message from a queue without deleting it before being moved to the dead-letter queue. Setting the &lt;code class=&quot;language-text&quot;&gt;maxReceiveCount&lt;/code&gt; to a low value such as 1 would result in any failure to receive a message to cause the message to be moved to the dead-letter queue. Such failures include network errors and client dependency errors. To ensure that your system is resilient against errors, set the &lt;code class=&quot;language-text&quot;&gt;maxReceiveCount&lt;/code&gt; high enough to allow for sufficient retries.&lt;/p&gt;
+&lt;p&gt;The redrive task uses Amazon SQS&apos;s &lt;code class=&quot;language-text&quot;&gt;SendMessageBatch&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;ReceiveMessage&lt;/code&gt;, and &lt;code class=&quot;language-text&quot;&gt;DeleteMessageBatch&lt;/code&gt; APIs on behalf of the user to redrive the messages. Therefore, all redriven messages are considered new messages with a new &lt;code class=&quot;language-text&quot;&gt;messageid&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;enqueueTime&lt;/code&gt;, and &lt;code class=&quot;language-text&quot;&gt;retention period&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;For standard queues, the expiration of a message is always based on its original enqueue timestamp. When a message is moved to a dead-letter queue, the enqueue timestamp is unchanged. The &lt;code class=&quot;language-text&quot;&gt;ApproximateAgeOfOldestMessage&lt;/code&gt; metric indicates when the message moved to the dead-letter queue, not when the message was originally sent. For example, assume that a message spends 1 day in the original queue before it&apos;s moved to a dead-letter queue. If the dead-letter queue&apos;s retention period is 4 days, the message is deleted from the dead-letter queue after 3 days and the &lt;code class=&quot;language-text&quot;&gt;ApproximateAgeOfOldestMessage&lt;/code&gt; is 3 days. Thus, it is a best practice to always set the retention period of a dead-letter queue to be longer than the retention period of the original queue.&lt;/p&gt;
+&lt;h2 id=&quot;code&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#code&quot; aria-label=&quot;code permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Code!&lt;/h2&gt;
+&lt;p&gt;Now that we understand SQS queues and Lambdas (a little!), let&apos;s look at the CDK and lambda code for our daigram.&lt;/p&gt;
+&lt;h2 id=&quot;appendix&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#appendix&quot; aria-label=&quot;appendix permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Appendix&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-basic-architecture.html&quot;&gt;SQS Architecture&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html&quot;&gt;Using lambda with SQS&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content:encoded></item><item><title><![CDATA[Typescript]]></title><description><![CDATA[Compiler Type System Types any objects optional values index signatures union and intersections arrays tuples enums functions Compiler Here…]]></description><link>https://gatsbystarterblogsource.gatsbyjs.io/typescript/</link><guid isPermaLink="false">https://gatsbystarterblogsource.gatsbyjs.io/typescript/</guid><pubDate>Fri, 29 Sep 2023 22:40:32 GMT</pubDate><content:encoded>&lt;div class=&quot;table-of-contents&quot;&gt;
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;&lt;a href=&quot;#compiler&quot;&gt;Compiler&lt;/a&gt;&lt;/p&gt;
