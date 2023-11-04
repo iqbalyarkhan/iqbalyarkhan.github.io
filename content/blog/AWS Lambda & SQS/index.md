@@ -331,6 +331,18 @@ export const SQS_NO_BATCH_ITEM_FAILURES = {
 }
 ```
 
+A failure response would look like this:
+
+```json
+{
+  "batchItemFailures": [
+    {
+      "itemIdentifier": "2e1424d4-f796-459a-8184-9c92662be6da"
+    }
+  ]
+}
+```
+
 If there're no failures, we simply return an empty failures array.
 
 ## Appendix
