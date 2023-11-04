@@ -177,9 +177,161 @@ The redrive task uses Amazon SQS's `SendMessageBatch`, `ReceiveMessage`, and `De
 
 For standard queues, the expiration of a message is always based on its original enqueue timestamp. When a message is moved to a dead-letter queue, the enqueue timestamp is unchanged. The `ApproximateAgeOfOldestMessage` metric indicates when the message moved to the dead-letter queue, not when the message was originally sent. For example, assume that a message spends 1 day in the original queue before it's moved to a dead-letter queue. If the dead-letter queue's retention period is 4 days, the message is deleted from the dead-letter queue after 3 days and the `ApproximateAgeOfOldestMessage` is 3 days. Thus, it is a best practice to always set the retention period of a dead-letter queue to be longer than the retention period of the original queue.
 
+## Lambda responses
+
+Lambda can return a success or a failure in the following [scenarios](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#:~:text=Success%20and%20failure%20conditions)
+
+Lambda treats a batch as a complete success if your function returns any of the following:
+
+- An empty batchItemFailures list
+- A null batchItemFailures list
+- An empty EventResponse
+- A null EventResponse
+
+Lambda treats a batch as a complete failure if your function returns any of the following:
+
+- An invalid JSON response
+- An empty string itemIdentifier
+- A null itemIdentifier
+- An itemIdentifier with a bad key name
+- An itemIdentifier value with a message ID that doesn't exist
+
 ## Code!
 
-Now that we understand SQS queues and Lambdas (a little!), let's look at the CDK and lambda code for our daigram.
+Now that we understand SQS queues and Lambdas (a little!), let's look at the CDK and lambda code for our daigram:
+
+![SQS-Lambda](./QueueWithDLQ.png)
+
+Let's start with creation of SQS (both regular SQS and DLQ):
+
+```ts
+  private createQueue() {
+    const queue = new Queue(this, "myQueue", {
+      visibilityTimeout: Duration.seconds(4),
+      encryption: QueueEncryption.KMS,
+      encryptionMasterKey: this.kmsKey,
+    });
+    return queue;
+  }
+
+    private createDeadLetterQueue(): Queue {
+    const dlq = new Queue(this, "dlq", {
+      retentionPeriod: Duration.days(14),
+      visibilityTimeout: Duration.seconds(30),
+      encryption: QueueEncryption.KMS,
+      encryptionMasterKey: this.kmsKey,
+    });
+
+    return dlq;
+  }
+```
+
+- `visibilityTimeout`: For our queue, it is 4 seconds while for the DLQ it is 30 seconds. A message remains in the queue and isn't returned to subsequent receive requests for the duration of the visibility timeout. ie, the consumer has this amount of time to process and delete the message from the queue.
+
+Next up, the lambda:
+
+```ts
+  private createLambdaFunction() {
+    const lambdaRole = new Role(this, "SQSTriggeredLambdaRole", {
+      assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
+      roleName: "SQSTriggeredLambdaRole",
+    });
+
+    lambdaRole.addToPolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        resources: [this.notificationsQueue.queueArn],
+        actions: [
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:GetQueueAttributes",
+          "sqs:SendMessage",
+        ],
+      })
+    );
+
+    lambdaRole.addManagedPolicy({
+      managedPolicyArn:
+        "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+    });
+
+    const lambda = new NodejsFunction(this, "SQSTriggeredLambda", {
+      functionName: "SQSTriggeredLambda",
+      runtime: Runtime.NODEJS_18_X,
+      handler: "handler",
+      entry: "lambdas/sqsToLambda.ts",
+      tracing: Tracing.ACTIVE,
+      memorySize: 256,
+      timeout: Duration.seconds(5),
+      role: lambdaRole,
+      deadLetterQueue: this.dlq,
+    });
+
+    return lambda;
+  }
+```
+
+First, we have the permissions for this lambda. We create a role called `SQSTriggeredLambdaRole` to which we'll assign the permissions. This role will then be assumed by our lambda. Next, we add SQS and lambda execution permissions to the role. Finally, we create the lambda to use runtime of NodeJS18, a memory size of 256 and timeout duration of 5 seconds.
+
+Here's the actual lambda function code:
+
+```ts
+import { SQSBatchResponse, SQSEvent, SQSRecord } from "aws-lambda"
+import {
+  SQS_NO_BATCH_ITEM_FAILURES,
+  createSQSBatchResponse,
+} from "../lib/utils/responseUtils"
+
+/**
+ * Reads from SQS
+ * @param event: SQS event
+ */
+export const handler = async (event: SQSEvent): Promise<SQSBatchResponse> => {
+  // Get the object from the event and show its content
+  const records: SQSRecord[] = event.Records
+  const failedItems: string[] = []
+  records.forEach(record => {
+    if (record.body.includes("error")) {
+      failedItems.push(record.messageId)
+    } else {
+      console.log(record.body)
+    }
+  })
+
+  if (failedItems.length > 0) {
+    return createSQSBatchResponse([...failedItems])
+  }
+
+  return SQS_NO_BATCH_ITEM_FAILURES
+}
+```
+
+Lambda function accepts an SQSEvent and returns a SQSBatchResponse promise:
+
+`export const handler = async (event: SQSEvent): Promise<SQSBatchResponse> => {...}`
+
+We create an error array called `failedItems` in case there're any failures. We then iterate over the `Records` array (that's what SQS sends to the lambda). If the body contains the word error, we'll add the message id to `failedItems`. Otherwise, we'll simply print the message body.
+
+Finally, if there're any failed items, we create a SQSBatchResponse type like so:
+
+```ts
+import { SQSBatchItemFailure, SQSBatchResponse } from "aws-lambda"
+
+export function createSQSBatchResponse(
+  failedItems: string[]
+): SQSBatchResponse {
+  const failures: SQSBatchItemFailure[] = []
+  failedItems.forEach(item => failures.push({ itemIdentifier: item }))
+
+  return { batchItemFailures: failures }
+}
+
+export const SQS_NO_BATCH_ITEM_FAILURES = {
+  batchItemFailures: [],
+}
+```
+
+If there're no failures, we simply return an empty failures array.
 
 ## Appendix
 
