@@ -207,7 +207,7 @@ Let's start with creation of SQS (both regular SQS and DLQ):
 ```ts
   private createQueue() {
     const queue = new Queue(this, "myQueue", {
-      visibilityTimeout: Duration.seconds(4),
+      visibilityTimeout: Duration.seconds(5),
       encryption: QueueEncryption.KMS,
       encryptionMasterKey: this.kmsKey,
     });
@@ -226,7 +226,7 @@ Let's start with creation of SQS (both regular SQS and DLQ):
   }
 ```
 
-- `visibilityTimeout`: For our queue, it is 4 seconds while for the DLQ it is 30 seconds. A message remains in the queue and isn't returned to subsequent receive requests for the duration of the visibility timeout. ie, the consumer has this amount of time to process and delete the message from the queue.
+- `visibilityTimeout`: For our queue, it is 5 seconds while for the DLQ it is 30 seconds. A message remains in the queue and isn't returned to subsequent receive requests for the duration of the visibility timeout. ie, the consumer has this amount of time to process and delete the message from the queue.
 
 Next up, the lambda:
 
