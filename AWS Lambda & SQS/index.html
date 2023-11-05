@@ -369,7 +369,7 @@ sqs<span class="token operator">:</span> ReceiveMessage</code></pre></div>
 <p>Let's start with creation of SQS (both regular SQS and DLQ):</p>
 <div class="gatsby-highlight" data-language="ts"><pre class="language-ts"><code class="language-ts">  <span class="token keyword">private</span> <span class="token function">createQueue</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token keyword">const</span> queue <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Queue</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> <span class="token string">"myQueue"</span><span class="token punctuation">,</span> <span class="token punctuation">{</span>
-      visibilityTimeout<span class="token operator">:</span> Duration<span class="token punctuation">.</span><span class="token function">seconds</span><span class="token punctuation">(</span><span class="token number">4</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      visibilityTimeout<span class="token operator">:</span> Duration<span class="token punctuation">.</span><span class="token function">seconds</span><span class="token punctuation">(</span><span class="token number">5</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
       encryption<span class="token operator">:</span> QueueEncryption<span class="token punctuation">.</span><span class="token constant">KMS</span><span class="token punctuation">,</span>
       encryptionMasterKey<span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span>kmsKey<span class="token punctuation">,</span>
     <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -387,7 +387,7 @@ sqs<span class="token operator">:</span> ReceiveMessage</code></pre></div>
     <span class="token keyword">return</span> dlq<span class="token punctuation">;</span>
   <span class="token punctuation">}</span></code></pre></div>
 <ul>
-<li><code class="language-text">visibilityTimeout</code>: For our queue, it is 4 seconds while for the DLQ it is 30 seconds. A message remains in the queue and isn't returned to subsequent receive requests for the duration of the visibility timeout. ie, the consumer has this amount of time to process and delete the message from the queue.</li>
+<li><code class="language-text">visibilityTimeout</code>: For our queue, it is 5 seconds while for the DLQ it is 30 seconds. A message remains in the queue and isn't returned to subsequent receive requests for the duration of the visibility timeout. ie, the consumer has this amount of time to process and delete the message from the queue.</li>
 </ul>
 <p>Next up, the lambda:</p>
 <div class="gatsby-highlight" data-language="ts"><pre class="language-ts"><code class="language-ts">  <span class="token keyword">private</span> <span class="token function">createLambdaFunction</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
