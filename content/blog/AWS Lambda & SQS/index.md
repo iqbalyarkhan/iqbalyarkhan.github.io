@@ -277,6 +277,10 @@ Here's the actual lambda function code:
 
 ```ts
 import { SQSBatchResponse, SQSEvent, SQSRecord } from "aws-lambda"
+import { Logger } from "@aws-lambda-powertools/logger"
+
+const logger = new Logger()
+
 import {
   SQS_NO_BATCH_ITEM_FAILURES,
   createSQSBatchResponse,
@@ -284,17 +288,31 @@ import {
 
 /**
  * Reads from SQS
- * @param event: SQS event
+ * @param event
  */
 export const handler = async (event: SQSEvent): Promise<SQSBatchResponse> => {
-  // Get the object from the event and show its content
+  // Get the object from the event and show its content type
   const records: SQSRecord[] = event.Records
   const failedItems: string[] = []
+  logger.info(`received the following in lambda: ${JSON.stringify(records)}`)
   records.forEach(record => {
-    if (record.body.includes("error")) {
+    const body = JSON.parse(record.body)
+    const receviedMessage = JSON.parse(body)
+    logger.info(
+      `receivedFrom is: ${receviedMessage.receivedFrom} && eventType is: ${receviedMessage.eventType}`
+    )
+    try {
+      if (
+        receviedMessage.receivedFrom === "Console" &&
+        receviedMessage.eventType === "Non-Error"
+      ) {
+        console.log("🎉*SUCCESSS!*🎉")
+      }
+    } catch (e) {
+      logger.error(
+        `Invalid SQS message received: ${record.messageId}, body: ${record.body}`
+      )
       failedItems.push(record.messageId)
-    } else {
-      console.log(record.body)
     }
   })
 
@@ -310,7 +328,13 @@ Lambda function accepts an SQSEvent and returns a SQSBatchResponse promise:
 
 `export const handler = async (event: SQSEvent): Promise<SQSBatchResponse> => {...}`
 
-We create an error array called `failedItems` in case there're any failures. We then iterate over the `Records` array (that's what SQS sends to the lambda). If the body contains the word error, we'll add the message id to `failedItems`. Otherwise, we'll simply print the message body.
+We create an error array called `failedItems` in case there're any failures. We then iterate over the `Records` array (that's what SQS sends to the lambda). If there're any errors, we'll add the message id to `failedItems`. Otherwise, we'll simply print the message body.
+
+Here's a sample record for our SQS (from console):
+
+```json
+"{\"receivedFrom\": \"Console\", \"eventType\":\"Non-Error\"}"
+```
 
 Finally, if there're any failed items, we create a SQSBatchResponse type like so:
 
