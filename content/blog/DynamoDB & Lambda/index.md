@@ -1,6 +1,6 @@
 ---
 title: AWS Lambda & DynamoDB
-date: "2023-10-27T22:40:32.169Z"
+date: "2023-10-28T22:40:32.169Z"
 description: Lambda with DynamoDB as event source
 ---
 
@@ -109,10 +109,123 @@ The following diagram shows the relationship between a stream, shards in the str
 
 ![Shard](./shards.png)
 
-## Streams and Lambda
+The AWS Lambda service polls the stream for new records four times per second. When new stream records are available, your Lambda function is synchronously invoked. You can subscribe up to two Lambda functions to the same DynamoDB stream. Let's look at an example setup where a DynamoDB table is created and has a lambda listening to its streams.
 
-Amazon DynamoDB is integrated with AWS Lambda so that you can create triggers—pieces of code that automatically respond to events in DynamoDB Streams. With triggers, you can build applications that react to data modifications in DynamoDB tables.
+## Code!
 
-If you enable DynamoDB Streams on a table, you can associate the stream Amazon Resource Name (ARN) with an AWS Lambda function that you write. All mutation actions to that DynamoDB table can then be captured as an item on the stream. For example, you can set a trigger so that when an item in a table is modified a new record immediately appears in that table's stream.
+Let's start by creating our lambda via the CDK. This is the same lambda we've seen in the past for Lambda -> SQS flow only with different permissions:
 
-The AWS Lambda service polls the stream for new records four times per second. When new stream records are available, your Lambda function is synchronously invoked. You can subscribe up to two Lambda functions to the same DynamoDB stream.
+```ts
+  private createLambdaFunction(tableStreamArn: string) {
+    const lambdaRole = new Role(this, "DynamoDBStreamLambdaRole", {
+      assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
+      roleName: "DynamoDBStreamLambdaRole",
+    });
+
+    lambdaRole.addToPolicy(
+      new PolicyStatement({
+        actions: [
+          "dynamodb:DescribeStream",
+          "dynamodb:GetRecords",
+          "dynamodb:GetShardIterator",
+          "dynamodb:ListStreams",
+        ],
+        resources: [tableStreamArn],
+      })
+    );
+
+    lambdaRole.addManagedPolicy({
+      managedPolicyArn:
+        "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+    });
+
+    const lambda = new NodejsFunction(this, "DynamoDBStreamLambda", {
+      functionName: "DynamoDBStreamLambda",
+      runtime: Runtime.NODEJS_18_X,
+      handler: "handler",
+      entry: "lambdas/dynamoDBStreamLambda.ts",
+      tracing: Tracing.ACTIVE,
+      memorySize: 256,
+      timeout: Duration.seconds(5),
+      role: lambdaRole,
+    });
+
+    return lambda;
+  }
+```
+
+Next up, here's how we create our dynamoDB:
+
+```ts
+  private createDynamoDBTable() {
+    const dynamoDBTable = new Table(this, "CustomerOrdersTable", {
+      tableName: "CustomerOrdersTable",
+      partitionKey: { name: "id", type: AttributeType.STRING },
+      stream: StreamViewType.NEW_IMAGE,
+      billingMode: BillingMode.PAY_PER_REQUEST,
+    });
+
+    return dynamoDBTable;
+  }
+```
+
+Notice the `stream` value above. DynamoDB `StreamViewType` determines what information is captured in the DynamoDB stream when a data modification occurs. There are four possible `StreamViewTypes`:
+
+- `KEYS_ONLY`: Only the key attributes of the modified item are written to the stream.
+- `NEW_IMAGE`: The entire item, as it appears after the modification, is written to the stream.
+- `OLD_IMAGE`: The entire item, as it appeared before the modification, is written to the stream.
+- `NEW_AND_OLD_IMAGES`: Both the new and old images of the item are written to the stream.
+
+You can choose the `StreamViewType` when enabling a DynamoDB stream for a table. Once a stream has been set up, it is not possible to edit the `StreamViewType`.
+
+Next up, we need to set up event source for our lambda (ie what would trigger the lambda):
+
+```ts
+this.lambda.addEventSource(
+  new DynamoEventSource(this.dynamoDBTable, {
+    startingPosition: StartingPosition.TRIM_HORIZON,
+  })
+)
+```
+
+The `StartingPosition` parameter is used to specify the point at which the application reads from the DynamoDB stream. There are three possible values for `StartingPosition`:
+
+- `NOW`: This value allows you to start reading just after the most recent record in the stream, starting at the timestamp of the customer's request.
+- `TRIM_HORIZON`: With this value, you can start reading at the last untrimmed record in the stream, which is the oldest record available in the stream.
+- `LAST_STOPPED_POINT`: This value is used to resume reading from where the application last stopped reading.
+
+With what we've defined above, lambda will read the oldest available record in the stream.
+
+Here's the sample payload received in our lambda when we create a new entry in our DDB:
+
+```ts
+{
+    "level": "INFO",
+    "message": "received the following in dynamoDB lambda:
+    {
+      \"Records\":[
+        {
+          \"eventID\":\"05b1ab76243a9468ea07014fa793ed3d\",
+          \"eventName\":\"INSERT\",
+          \"eventVersion\":\"1.1\",
+          \"eventSource\":\"aws:dynamodb\",
+          \"awsRegion\":\"us-east-1\",
+          \"dynamodb\":{\"ApproximateCreationDateTime\":1703457600,
+          \"Keys\":{\"id\":{\"S\":\"1\"}},
+          \"NewImage\":{
+            \"customerEmail\":{\"S\":\"firstcustomer@gmail.com\"},
+            \"id\":{\"S\":\"1\"},
+            \"customerName\":{\"S\":\"First Customer\"}
+          },
+          \"SequenceNumber\":\"100000000078416239681\",
+          \"SizeBytes\":68,
+          \"StreamViewType\":\"NEW_IMAGE\"},
+          \"eventSourceARN\":\"arn:aws:dynamodb:us-east-1:063712744160:table/CustomerOrdersTable/stream/2023-12-24T22:29:00.593\"
+        }
+      ]
+    }",
+    "service": "service_undefined",
+    "timestamp": "2023-12-24T22:40:01.104Z",
+    "xray_trace_id": "1-6588b340-28a13a3ce35cb81a845225ba"
+}
+```
