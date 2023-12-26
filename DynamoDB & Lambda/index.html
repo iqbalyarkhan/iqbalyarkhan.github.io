@@ -278,6 +278,22 @@
     <span class="token string-property property">"service"</span><span class="token operator">:</span> <span class="token string">"service_undefined"</span><span class="token punctuation">,</span>
     <span class="token string-property property">"timestamp"</span><span class="token operator">:</span> <span class="token string">"2023-12-24T22:40:01.104Z"</span><span class="token punctuation">,</span>
     <span class="token string-property property">"xray_trace_id"</span><span class="token operator">:</span> <span class="token string">"1-6588b340-28a13a3ce35cb81a845225ba"</span>
+<span class="token punctuation">}</span></code></pre></div>
+<p>and here's what the lambda code looks like:</p>
+<div class="gatsby-highlight" data-language="ts"><pre class="language-ts"><code class="language-ts"><span class="token keyword">import</span> <span class="token punctuation">{</span> <span class="token keyword">type</span> <span class="token class-name">DynamoDBStreamEvent</span> <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"aws-lambda"</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> Logger <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">"@aws-lambda-powertools/logger"</span>
+
+<span class="token keyword">const</span> logger <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Logger</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token comment">/**
+ * Reads from SQS
+ * @param event
+ */</span>
+<span class="token keyword">export</span> <span class="token keyword">const</span> <span class="token function-variable function">handler</span> <span class="token operator">=</span> <span class="token keyword">async</span> <span class="token punctuation">(</span>event<span class="token operator">:</span> DynamoDBStreamEvent<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token punctuation">{</span>
+  <span class="token comment">// Get the object from the event and show its content type</span>
+  <span class="token class-name">logger</span><span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span>
+    <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">received the following in dynamoDB lambda: </span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span><span class="token constant">JSON</span><span class="token punctuation">.</span><span class="token function">stringify</span><span class="token punctuation">(</span>event<span class="token punctuation">)</span><span class="token interpolation-punctuation punctuation">}</span></span><span class="token template-punctuation string">`</span></span>
+  <span class="token punctuation">)</span>
 <span class="token punctuation">}</span></code></pre></div></section><hr/><footer><div class="bio"></div></footer></article></main><footer>© <!-- -->2023<!-- -->, Built with<!-- --> <a href="https://www.gatsbyjs.com">Gatsby</a></footer></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/DynamoDB & Lambda/";/*]]>*/</script><!-- slice-start id="_gatsby-scripts-1" -->
           <script
             id="gatsby-chunk-mapping"
