@@ -229,3 +229,23 @@ Here's the sample payload received in our lambda when we create a new entry in o
     "xray_trace_id": "1-6588b340-28a13a3ce35cb81a845225ba"
 }
 ```
+
+and here's what the lambda code looks like:
+
+```ts
+import { type DynamoDBStreamEvent } from "aws-lambda"
+import { Logger } from "@aws-lambda-powertools/logger"
+
+const logger = new Logger()
+
+/**
+ * Reads from SQS
+ * @param event
+ */
+export const handler = async (event: DynamoDBStreamEvent) => {
+  // Get the object from the event and show its content type
+  logger.info(
+    `received the following in dynamoDB lambda: ${JSON.stringify(event)}`
+  )
+}
+```
