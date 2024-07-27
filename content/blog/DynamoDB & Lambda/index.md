@@ -239,7 +239,7 @@ import { Logger } from "@aws-lambda-powertools/logger"
 const logger = new Logger()
 
 /**
- * Reads from SQS
+ * Reads from DynamoDB Stream
  * @param event
  */
 export const handler = async (event: DynamoDBStreamEvent) => {
